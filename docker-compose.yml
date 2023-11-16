@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  bitrate:
+    env_file:
+      - .env
+    restart: always
+    build: .
+    command: ./scripts/docker-entrypoint.sh
+#    volumes:
+#      - /var/www/bitrate/bitratestatics:/code/dnm/staticfiles
+    ports:
+      - '8001:8000'
+    depends_on:
+      - database
+      - redis
+    networks:
+      - dbnet
+      - redisnet
+
+  database:
+    env_file:
+      - .env
+    restart: always
+    image: postgres:13-alpine
+    networks:
+        - dbnet
+  redis:
+    env_file:
+      - .env
+    restart: always
+    image: redis:6.2-alpine
+    networks:
+      - redisnet
+
+networks:
+  dbnet: {}
+  redisnet: {}
